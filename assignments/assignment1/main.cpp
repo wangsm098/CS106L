@@ -33,7 +33,7 @@ void parse_csv(std::string filename, std::vector<Course>& courses) {
     
     int i = 1;
     std::string str;
-    // fliter line one
+    // filter line one
     std::getline(in, str);
     while (std::getline(in, str)) {
         std::vector<std::string> tokens = split(str, ',');
