@@ -1,0 +1,22 @@
+Before submitting this file, make sure that there are no more TODO
+placeholders remaining in the file (and remove this comment too).
+
+Marriage Pact
+-------------
+
+Q1. It is your choice to use either an ordered or unordered set. In a few sentences, what are some of the tradeoffs between the two? Additionally, please give an example (that has not been shown in lecture) of a valid hash function that could be used to hash student names for an unordered set.
+A1. Set keeps elements ordered, which is useful for sorted iteration, but its operations are typically O(log n). Unordered_set is usually faster on average, with O(1) lookup and insertion, but it does not preserve order and relies on a good hash function.
+
+Example hash function:
+struct NameHash {
+    std::size_t operator()(const std::string& name) const {
+        std::size_t hash = 0;
+        for (char ch : name) {
+            hash = hash * 131 + static_cast<unsigned char>(ch);
+        }
+        return hash;
+    }
+};
+
+Q2. Note that we are saving pointers to names in the queue, not names themselves. Why might this be desired in this problem? What happens if the original set where the names are stored goes out of scope and the pointers are referenced?
+A2. We may want to store pointers instead of names themselves to avoid copying strings and to let the queue refer directly to the original names stored in the set. This can be more efficient and better reflects that the queue is only referencing candidate   matches rather than owning them. However, this only works as long as the original set remains alive. If the set goes out of scope, the strings inside it are destroyed, and the stored pointers become dangling pointers. Referencing them after that causes undefined behavior, which may lead to crashes, garbage output, or other unpredictable results.
