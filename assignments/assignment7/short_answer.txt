@@ -1,0 +1,23 @@
+Before submitting this file, make sure that there are no more TODO
+placeholders remaining in the file (and remove this comment too).
+
+Unique Pointer
+--------------
+
+Q1. List one or two benefits of using RAII to manage memory instead manually calling `new` and `delete`.
+A1. 
+    Benefit 1: Exception Safety. 
+    Benefit 2: Prevention of Memory Leaks.
+
+Q2. When implementing move semantics for a `unique_ptr`, for example in the move constructor `unique_ptr(unique_ptr&& other)`, it is essential that we set the underlying pointer of the `other` parameter to `nullptr` before exiting the function. Explain in your own words what problem would arise if we did not.
+A2. 
+    If we do not set other's pointer, then when other goes out of scope, its destructor will be called and it will delete the memory that we just moved. This leads to a Double Free error when our new object also tries to delete that same memory later. Additionally, our new object would be left with Dangling Pointer to memory that has already been deallocated.
+
+Q3. This method of recursive deallocation through RAII works great for small lists, but may pose a problem for longer lists. Why? Hint: what is the limit for how "deep" a recursive function's call stack can grow?
+A3. 
+    The recursive deallocation of a long list can lead to a Stack Overflow. Each unique_ptr destructor call adds a new frame to the call stack. Since the stack has a limited size, a sufficiently long list will exceed this limit, causing the program to crash.    
+
+Q4. What does `std::move` do in this context? Why is it safe to use `std::move` and move semantics here?
+A4.
+    What std::move does: In this context, std::move performs a static cast of the lvalue head to an rvalue reference. It does not perform any actual movement itself, but it allows the compiler to match and call the move assignment operator of unique_ptr instead of the deleted copy assignment operator.
+    Why it is safe: It is safe because we are explicitly transferring the exclusive ownership of the list from the old head to the next pointer of the new node. Once the move is complete, the original head becomes nullptr, preventing any accidental double-freeing of memory or shared ownership, which preserves the core safety guarantees of unique_ptr.
